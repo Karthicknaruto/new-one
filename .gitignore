@@ -51,8 +51,6 @@ desktop.ini
 # Streamlit temporary data
 .streamlit/secrets.toml
 
-# Pre-trained Model weights (~90MB)
-# (Auto-downloaded by run.bat and download_model.py)
-# If you prefer to track the model directly in GitHub, comment out the line below.
+# Ignore any legacy >50MB model files
+*.h5
 trained_plant_disease_model.keras
-trained_plant_disease_model.h5

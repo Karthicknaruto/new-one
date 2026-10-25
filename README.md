@@ -1,31 +1,33 @@
-# 🌿 Plant Disease Recognition System
+# 🌿 Plant Disease Recognition System (MobileNetV2)
 
-An AI-powered computer vision system capable of identifying **38 different classes** of plant leaf diseases using Convolutional Neural Networks (CNN) and providing an interactive web dashboard built with **Streamlit**.
+An AI-powered computer vision system capable of identifying **38 different classes** of plant leaf diseases using **MobileNetV2 Transfer Learning** and an interactive web dashboard built with **Streamlit**.
 
 ---
 
 ## 🚀 Features
 
-- **High Accuracy Detection:** Trained on over 87,000 augmented leaf images from the New Plant Diseases (PlantVillage) dataset.
-- **38 Classes Supported:** Covers healthy and diseased conditions for Apple, Blueberry, Cherry, Corn, Grape, Orange, Peach, Pepper, Potato, Raspberry, Soybean, Squash, Strawberry, and Tomato.
-- **⚡ 1-Click Setup & Launch:** Windows batch scripts (`run.bat` and `setup.bat`) automatically configure Python dependencies, download pre-trained model weights, and launch the dashboard.
-- **Interactive Web Interface:** Upload any plant leaf image to instantly preview and receive prediction results with confidence percentages.
-- **Sample Test Images Included:** Comes with pre-bundled sample leaf images in `sample_test_images/` for instant testing.
+- **MobileNetV2 Transfer Learning:** Pre-trained on ImageNet and fine-tuned on ~87,000 augmented leaf images from the PlantVillage dataset.
+- **Ultra Lightweight & Fast:** Only **~24 MB** model size (compared to ~90 MB for standard CNNs) with sub-second CPU inference.
+- **38 Classes Supported:** Detects healthy leaves and diseases across Apple, Blueberry, Cherry, Corn, Grape, Orange, Peach, Pepper, Potato, Raspberry, Soybean, Squash, Strawberry, and Tomato.
+- **⚡ 1-Click Setup & Launch:** Windows launcher scripts (`run.bat` and `setup.bat`) automatically verify 64-bit Python, upgrade pip, install dependencies, and launch the dashboard.
+- **Sample Test Images Included:** Comes pre-bundled with real leaf images in `sample_test_images/` for instant testing.
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-├── main.py                             # Streamlit dashboard application
-├── download_model.py                   # Automatic model weight downloader (~90MB)
+├── main.py                             # Streamlit dashboard application (MobileNetV2 engine)
+├── mobilenet_v2_plant_disease.keras    # Pre-trained MobileNetV2 weights (~24 MB)
+├── download_model.py                   # Model weight verification & auto-downloader
+├── install_dependencies.py             # Smart environment & 64-bit Python checker
 ├── run.bat                             # 1-Click setup & launch script for Windows
-├── setup.bat                           # 1-Click dependency setup script
+├── setup.bat                           # 1-Click environment setup script
 ├── requirements.txt                    # Project dependencies
 ├── home_page.jpeg                      # Cover banner for the dashboard
-├── Train_plant_disease.ipynb           # Model training notebook (CNN architecture & training)
-├── Test_plant_disease.ipynb            # Model evaluation & confusion matrix notebook
-├── training_hist.json                  # Saved training loss/accuracy metrics (10 epochs)
+├── Train_plant_disease_mobilenetv2.ipynb # MobileNetV2 transfer learning notebook
+├── Train_plant_disease.ipynb           # Original Custom CNN notebook
+├── Test_plant_disease.ipynb            # Original evaluation notebook
 ├── sample_test_images/                 # Real test leaf images for quick testing
 │   ├── Apple_Cedar_apple_rust.JPG
 │   ├── Apple_healthy.JPG
@@ -46,87 +48,47 @@ run.bat
 ```
 
 What `run.bat` does automatically:
-1. Verifies your Python installation.
-2. Installs all required packages from `requirements.txt`.
-3. Verifies and downloads `trained_plant_disease_model.keras` (~90 MB) if missing.
-4. Starts the Streamlit server and opens `http://localhost:8501` in your default browser.
+1. Verifies that you are running **64-bit Python**.
+2. Upgrades `pip` to the latest release.
+3. Installs all required packages (`streamlit`, `tensorflow`, `numpy`, `pillow`, etc.).
+4. Ensures the pre-trained MobileNetV2 weights (`mobilenet_v2_plant_disease.keras`) are ready.
+5. Launches the Streamlit dashboard in your default browser at `http://localhost:8501`.
 
 ---
 
-## 🛠️ Manual Installation
+## 🧠 Model Architecture & Comparison
 
-If you prefer setting up manually using a Python virtual environment:
+| Specification | Custom CNN (Previous) | MobileNetV2 (Current) |
+| :--- | :--- | :--- |
+| **Model File** | `trained_plant_disease_model.keras` | `mobilenet_v2_plant_disease.keras` |
+| **Model Size** | **~90 MB** | **~24 MB** (approx. 4× smaller) |
+| **Parameters** | ~7.8 Million | ~2.3 Million |
+| **Pre-training** | Trained from scratch | Pre-trained on ImageNet |
+| **Input Resolution** | $128 \times 128$ | $224 \times 224$ |
+| **Architecture** | 5-stage standard Conv2D + Dense | Inverted Residuals & Depthwise Convolutions |
 
-### 1. Clone your repository:
+---
+
+## 🛠️ Manual Setup
+
+If you prefer using a Python virtual environment manually:
+
 ```bash
-git clone https://github.com/<your-username>/<your-repo-name>.git
-cd <your-repo-name>
-```
+# 1. Clone repository
+git clone https://github.com/Karthicknaruto/new-one.git
+cd new-one
 
-### 2. Create and activate a virtual environment:
-```bash
-# Windows
+# 2. Create and activate virtual environment (64-bit Python 3.10-3.12 recommended)
 python -m venv venv
 venv\Scripts\activate
 
-# Linux / macOS
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Install dependencies:
-```bash
+# 3. Install dependencies
+python -m pip install --upgrade pip
 pip install -r requirements.txt
-```
 
-### 4. Download pre-trained model weights:
-```bash
-python download_model.py
-```
-
-### 5. Launch the Streamlit application:
-```bash
+# 4. Launch web application
 streamlit run main.py
 ```
-
----
-
-## 🧠 Model Architecture & Training
-
-The model uses a 5-stage Convolutional Neural Network (CNN):
-- **Input:** $128 \times 128 \times 3$ RGB leaf images
-- **Feature Extraction:** 5 Convolutional blocks (each with 2x Conv2D + ReLU + MaxPooling2D) with filter counts: 32 → 64 → 128 → 256 → 512
-- **Regularization:** Dropout (0.25 and 0.40) to mitigate overfitting
-- **Classification:** Flatten → Dense (1500 units, ReLU) → Dense (38 units, Softmax)
-- **Dataset:** [New Plant Diseases Dataset on Kaggle](https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset)
-
----
-
-## 📤 Pushing to Your GitHub Repository
-
-To push this project to your own GitHub account:
-
-### Step 1: Create a new repository on GitHub
-1. Go to [github.com/new](https://github.com/new).
-2. Name your repository (e.g., `plant-disease-prediction`).
-3. Leave "Initialize with README" **unchecked** (since this project already includes one).
-4. Click **Create repository**.
-
-### Step 2: Initialize Git and Push
-
-Open a terminal or command prompt in this project folder and run:
-
-```cmd
-git init
-git add .
-git commit -m "Initial commit: Plant Disease Recognition System with 1-click launcher"
-git branch -M main
-git remote add origin https://github.com/<YOUR-GITHUB-USERNAME>/<YOUR-REPO-NAME>.git
-git push -u origin main
-```
-
-> [!TIP]
-> By default, `.gitignore` excludes the 90 MB binary model weights file (`trained_plant_disease_model.keras`) because `run.bat` and `download_model.py` automatically download it upon running. If you want to commit the model directly to GitHub, simply comment out the `trained_plant_disease_model.keras` line in `.gitignore`.
 
 ---
 
