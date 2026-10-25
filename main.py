@@ -41,7 +41,28 @@ def load_disease_model():
     ]
     for path in candidates:
         if os.path.exists(path):
-            return tf.keras.models.load_model(path)
+            try:
+                # Check if it's an HDF5 file with .keras extension
+                with open(path, "rb") as f:
+                    header = f.read(4)
+                if header.startswith(b"\x89HDF"):
+                    # Keras 3 requires .h5 extension to load HDF5 format
+                    import shutil
+                    temp_h5 = path + ".temp.h5"
+                    shutil.copyfile(path, temp_h5)
+                    model = tf.keras.models.load_model(temp_h5)
+                    # Convert to genuine Keras 3 format for future runs
+                    try:
+                        model.save(path)
+                    except Exception:
+                        pass
+                    if os.path.exists(temp_h5):
+                        os.remove(temp_h5)
+                    return model
+                return tf.keras.models.load_model(path)
+            except Exception as e:
+                st.warning(f"Note: Error loading {path}: {e}")
+                continue
     return None
 
 def format_class_name(raw_name):
