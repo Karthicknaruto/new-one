@@ -11,16 +11,17 @@ echo.
 where python >nul 2>nul
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Python is not installed or not found on PATH.
-    echo Please download and install Python from https://www.python.org/
+    echo Please download and install 64-bit Python from https://www.python.org/
     pause
     exit /b 1
 )
 
-:: 2. Check and Install Python Dependencies
-echo [1/3] Checking and installing dependencies...
-python -m pip install -r requirements.txt
+:: 2. Check Architecture and Install Dependencies
+echo [1/3] Checking environment and installing dependencies...
+python install_dependencies.py
 if %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Dependency installation encountered an issue.
+    echo.
+    echo [ERROR] Dependency installation could not be completed.
     pause
     exit /b 1
 )
